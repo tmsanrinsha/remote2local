@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+$conf = json_decode(file_get_contents(getenv('HOME').'/.rfconf.json'), true);
+$params = json_decode(file_get_contents('php://stdin'), true);
+
+if($params['key'] !== $conf['key']) {
+    exit(1);
+}
+
+switch ($params['type']) {
+    case 'copy':
+        $pipe = popen('pbcopy', 'w');
+        fwrite($pipe, $params['text']);
+        pclose($pipe);
+        break;
+    case 'browser':
+        if (preg_match("/\Ahttps?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&=+$,%#]+/", $params['url'])) {
+            exec('open '.escapeshellarg($params['url']));
+        }
+        break;
+    default:
+        exit(1);
+        break;
+}
