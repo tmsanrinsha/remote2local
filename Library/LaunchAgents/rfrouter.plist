@@ -8,7 +8,15 @@
         <array>
             <string>sh</string>
             <string>-c</string>
-            <string>php -S 0.0.0.0:2224 $HOME/.ghq/github.com/tmsanrinsha/remote2local/router.php</string>
+            <string>
+                router_path=$HOME/.ghq/github.com/tmsanrinsha/remote2local/router.php
+                if [ -f $router_path ]; then
+                    osascript -e 'display notification "Start" with title "remote2local"'
+                    php -S 0.0.0.0:2224 $HOME/.ghq/github.com/tmsanrinsha/remote2local/router.php
+                else
+                    osascript -e 'display notification "No such file: '$router_path'" with title "remote2local"'
+                fi
+            </string>
         </array>
         <key>OnDemand</key>
         <false/>
