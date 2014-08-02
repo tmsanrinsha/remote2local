@@ -1,4 +1,7 @@
 <?php
+define(PBCOPY, __DIR__.'/bin/pbcopy');
+
+// 認証
 list($user, $apr1md5) = explode(':', file_get_contents(__DIR__.'/.htpasswd'));
 $apr1md5 = trim($apr1md5);
 list(,,$salt) = explode('$', $apr1md5);
@@ -8,9 +11,9 @@ if ($user !== $_SERVER['PHP_AUTH_USER'] || $apr1md5 !== crypt_apr1_md5($_SERVER[
     echo '401 Unauthorized'.PHP_EOL;
     exit;
 }
-echo $_SERVER['PHP_AUTH_PW'];
-echo $_SERVER['PHP_AUTH_USER'];
 
+
+// エンドポイント
 if (!preg_match('|^/([^/]+)$|', $_SERVER["REQUEST_URI"], $matches)) {
     http_response_code(404);
     echo '404 Not Found'.PHP_EOL;
@@ -19,15 +22,24 @@ if (!preg_match('|^/([^/]+)$|', $_SERVER["REQUEST_URI"], $matches)) {
 
 $endpoint =  $matches[1];
 
+
 switch ($endpoint) {
     case 'clipboard':
         if (!isset($_POST['data'])) {
             http_response_code(400);
             echo '400 Bad Request'.PHP_EOL;
+            echo 'No data to copy'.PHP_EOL;
             exit;
         }
 
-        $pipe = popen('/Users/tmsanrinsha/git/tmsanrinsha/remote2local/bin/pbcopy', 'w');
+        if (!is_executable(PBCOPY)) {
+            http_response_code(500);
+            echo '500 Internal Server Error'.PHP_EOL;
+            echo "Can't execute " . PBCOPY.PHP_EOL;
+            exit;
+        }
+
+        $pipe = popen(PBCOPY, 'w');
         fwrite($pipe, $_POST['data']);
         pclose($pipe);
         break;
@@ -35,6 +47,7 @@ switch ($endpoint) {
         if (!preg_match("/\Ahttps?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:@&=+$,%#]+\z/", $_POST['url'])) {
             http_response_code(400);
             echo '400 Bad Request'.PHP_EOL;
+            echo 'Invalid URL: '.$_POST['url'].PHP_EOL;
             exit;
         }
 
@@ -45,7 +58,9 @@ switch ($endpoint) {
         echo '404 Not Found'.PHP_EOL;
         exit;
 }
-http_response_code();
+
+http_response_code(200);
+
 
 function crypt_apr1_md5($plainpasswd, $salt = null) {
     $salt = is_null($salt) ? substr(str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789"), 0, 8) : $salt;
