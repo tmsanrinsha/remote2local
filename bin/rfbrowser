@@ -1,16 +1,3 @@
-#!/usr/bin/env php
-<?php
-$conf = json_decode(file_get_contents(getenv('HOME').'/.rfconf.json'), true);
-$params = array(
-    'key'  => $conf['key'],
-    'type' => 'browser',
-    'url'  => $argv[1]
-);
-
-$fp = fsockopen("localhost",2224, $errno, $errstr, 3);
-if (!$fp) {
-        echo "$errstr ($errno)\n";
-} else {
-    fwrite($fp, json_encode($params, JSON_UNESCAPED_SLASHES));
-    fclose($fp);
-}
+#!/usr/bin/env bash
+$passwd=`cat ~/.passwd`
+curl -u "$passwd" -d "url=$1" "http://localhost:2224/browser"
