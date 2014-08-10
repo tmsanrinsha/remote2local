@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-user_passwd=`cat ~/.user_passwd`
-curl -u "$user_passwd" -d "url=$1" "http://localhost:2224/browser"
+curl -n -d "url=$1" "http://localhost:2224/browser"

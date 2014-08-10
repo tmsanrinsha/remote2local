@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-user_passwd=`cat ~/.user_passwd`
-curl -u "$user_passwd" -d "data=`cat -`" "http://localhost:2224/clipboard"
+curl -n -d "data=`cat -`" "http://localhost:2224/clipboard"
