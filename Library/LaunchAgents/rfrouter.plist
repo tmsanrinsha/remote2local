@@ -9,7 +9,7 @@
             <string>sh</string>
             <string>-c</string>
             <string>
-                router_path=$HOME/.ghq/github.com/tmsanrinsha/remote2local/router.php
+                router_path=$HOME/src/github.com/tmsanrinsha/remote2local/router.php
                 if [ -f $router_path ]; then
                     osascript -e 'display notification "Start" with title "remote2local"'
                     # リモートマシンからのアクセスできるようにするにはlocalhostではなく0.0.0.0を使う
