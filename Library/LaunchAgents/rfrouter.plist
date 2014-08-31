@@ -9,7 +9,8 @@
             <string>sh</string>
             <string>-c</string>
             <string>
-                router_path=$HOME/src/github.com/tmsanrinsha/remote2local/router.php
+                file_path=$(readlink ~/Library/LaunchAgents/rfrouter.plist)
+                router_path=$(dirname $file_path)/../../router.php
                 if [ -f $router_path ]; then
                     osascript -e 'display notification "Start" with title "remote2local"'
                     # リモートマシンからのアクセスできるようにするにはlocalhostではなく0.0.0.0を使う
